@@ -16,12 +16,21 @@ const PatientDashboard = () => {
   const [showAIReport, setShowAIReport] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
+    const alreadyFetched = localStorage.getItem('patientDashboardFetched');
+
+    if (!alreadyFetched) {
+      setTimeout(() => {
+        setPrescriptionAvailable(true);
+        setLabTestsFetched(true);
+        fetchAppointment();
+        toast.info("Prescription and Lab tests fetched.");
+        localStorage.setItem('patientDashboardFetched', 'true');
+      }, 1000); // 1 second delay
+    } else {
       setPrescriptionAvailable(true);
       setLabTestsFetched(true);
       fetchAppointment();
-      toast.info("Prescription and Lab tests fetched.");
-    }, 5000);
+    }
   }, []);
 
   const fetchAppointment = () => {
@@ -105,7 +114,7 @@ const PatientDashboard = () => {
             <p className="text-gray-500">No upcoming appointments</p>
           ) : (
             appointments.map(appt => (
-              <div key={appt.id}>
+              <div key={appt.id} className="mb-2">
                 <p className="font-semibold">{appt.doctorName} - {appt.specialty}</p>
                 <p className="text-sm text-gray-600">{appt.date} at {appt.time}</p>
                 {appt.type === 'video' && (
@@ -140,7 +149,7 @@ const PatientDashboard = () => {
           )}
         </motion.div>
 
-        {/* Lab Test Info */}
+        {/* Lab Tests */}
         <motion.div whileHover={{ scale: 1.02 }} className="bg-white p-6 rounded-lg shadow-md">
           <MapPin className="w-8 h-8 text-blue-500 mb-2" />
           <h3 className="text-xl font-semibold mb-2">Upcoming Lab Tests</h3>
@@ -148,7 +157,7 @@ const PatientDashboard = () => {
             <p className="text-gray-500">No lab tests booked</p>
           ) : (
             <>
-              <p className="text-gray-700">2 tests scheduled at <strong>HOD </strong></p>
+              <p className="text-gray-700">2 tests scheduled at <strong>HOD</strong></p>
               <p className="text-sm text-gray-600">Date: 2025-06-16</p>
               <p className="text-sm text-gray-600">Time: 12:00 PM</p>
               <a href="https://www.google.com/maps/dir//HOD+Blood+Test+Centre,+Shop+No-1,+Ground+Floor,+C-1%2F49,+Sector+5,+Rohini,+New+Delhi,+Delhi+110085" target="_blank" rel="noopener noreferrer" className="inline-block mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
@@ -159,7 +168,7 @@ const PatientDashboard = () => {
         </motion.div>
       </div>
 
-      {/* Analytics & AI Analysis */}
+      {/* AI Health Analytics */}
       <motion.div whileHover={{ scale: 1.01 }} className="bg-white p-6 rounded-lg shadow-md mt-6">
         <div className="flex items-center gap-2 mb-4">
           <BarChart2 className="w-6 h-6 text-purple-500" />
@@ -205,6 +214,8 @@ const PatientDashboard = () => {
             <p className="text-right italic text-xs text-gray-500 mt-2">— Powered by MediBot by UHI Care</p>
           </div>
         )}
+
+        
       </motion.div>
     </motion.div>
   );
